@@ -1,4 +1,7 @@
+import jbotsim.Node;
 import jbotsim.Topology;
+import jbotsimx.ui.CommandListener;
+import jbotsimx.ui.JTopology;
 import jbotsimx.ui.JViewer;
 
 /**
@@ -6,12 +9,29 @@ import jbotsimx.ui.JViewer;
  */
 public class Main {
         public static void main(String[] args){
-        Topology tp = new Topology();
-        tp.setDefaultNodeModel(CarNode.class);
-        for(int i = 0; i < 10; i++)
-            tp.addNode(new CarNode());
-        JViewer jv = new JViewer(tp);
-        jv.getJTopology().addBackgroundPainter(new BackgroundPainter());
-        tp.start();
+            Topology tp = new Topology();
+            tp.setDimensions(1500,400);
+            tp.setDefaultNodeModel(CarNode.class);
+            for(int i = 0; i < 10; i++)
+                tp.addNode(new CarNode());
+
+
+
+            JViewer jv = new JViewer(tp);
+
+            JTopology jtp = jv.getJTopology();
+            jtp.addCommand("Panne");
+            jtp.addCommandListener(new CommandListener() {
+                @Override
+                public void onCommand(String command) {
+                    if (command.equals("Panne")) {
+                        Node node = tp.getNodes().get((int) Math.random() * tp.getNodes().size());
+                        ((CarNode) node).setSpeed(0);
+                    }
+                }
+            });
+
+            jv.getJTopology().addBackgroundPainter(new BackgroundPainter());
+            tp.start();
     }
 }

@@ -14,9 +14,9 @@ public class BackgroundPainter
 
         // Draws a grid (line by line)
         g.setColor(Color.gray);
-        g.drawLine(0, 150, 600, 150);
-        g.drawLine(0, 75, 600, 75);
-        g.drawLine(0, 225, 600, 225);
+        g.drawLine(0, 125, 1500, 125);
+        g.drawLine(0, 75, 1500, 75);
+        g.drawLine(0, 175, 1500, 175);
 
 
 
