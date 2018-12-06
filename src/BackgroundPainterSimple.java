@@ -2,7 +2,7 @@ import jbotsim.Topology;
 
 import java.awt.*;
 
-public class BackgroundPainter
+public class BackgroundPainterSimple
         implements jbotsimx.ui.painting.BackgroundPainter {
     @Override
     public void paintBackground(Graphics2D g, Topology tp) {
