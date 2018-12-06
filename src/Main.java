@@ -20,11 +20,11 @@ public class Main {
             JViewer jv = new JViewer(tp);
 
             JTopology jtp = jv.getJTopology();
-            jtp.addCommand("Panne");
+            jtp.addCommand("Breakdown");
             jtp.addCommandListener(new CommandListener() {
                 @Override
                 public void onCommand(String command) {
-                    if (command.equals("Panne")) {
+                    if (command.equals("Breakdown")) {
                         Node node = tp.getNodes().get((int) Math.random() * tp.getNodes().size());
                         ((CarNode) node).setSpeed(0);
                     }

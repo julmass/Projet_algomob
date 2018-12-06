@@ -41,9 +41,13 @@ enum Location{
     }
 
 }
+
+
+
 public class CarNode extends Node {
     private Queue<Point> destinations = new LinkedList<Point>();
-    private double speed = 1; // Number of units to be moved in each step.
+    private double frontSpeed = -1, speed = 1; // Number of units to be moved in each step.
+    private Point breakdown;
 
     public CarNode(){
         setIcon("car.png");
@@ -59,9 +63,10 @@ public class CarNode extends Node {
             addDestination(Direction.WEST.getDest());
         }
 
-        setSpeed(rand+0.5);
+        speed = rand+0.75;
 
         setSensingRange(60);
+
     }
 
     public void addDestination(Point point) {
@@ -76,44 +81,68 @@ public class CarNode extends Node {
         return destinations;
     }
 
-    public void setSpeed(double speed) {
+    public void setSpeed(double speed){
         this.speed = speed;
     }
 
-    @Override
-    public void onSensingIn(Node node){
-        if(node.getColor()!=null && node.getColor().equals(Color.BLACK) ){
-            if(getDirection() == node.getDirection())
-                setSpeed(0);
-            else if(getColor()==null){
-                alertMode();
-            }
-
-
-        }
+    public double getSpeed(){
+        return speed;
     }
 
-    public void alertMode(){
-        setSpeed(speed/2);
-        sendAll(new Message());
-        setColor(Color.RED);
+
+
+    @Override
+    public void onSensingIn(Node node){
+        //Adoption de la meme vitesse
+        if(getDirection() == node.getDirection())
+            frontSpeed = ((CarNode) node).getSpeed();
+
+        //Detection d'un vehicule en panne
+        if(node.getColor()!=null && node.getColor().equals(Color.BLACK) ){
+
+            if(getDirection() == node.getDirection())
+                speed = 0;
+            else if(getColor()==null){
+                breakdown = node.getLocation();
+                sendAll(new Message(breakdown));
+                setColor(Color.RED);
+            }
+        }
     }
 
     @Override
     public void onMessage(Message message){
-        if(getColor()==null)
-            alertMode();
+        breakdown = (Point) message.getContent();
+
+        if(getColor() == null){
+            if(breakdown.getX() == getLocation().getX())
+                speed = speed / 2;
+            setColor(Color.RED);
+        }
+
     }
 
     @Override
     public void onClock() {
         // Panne aleatoire
-        /*if(Math.random()*100>99.95) {
+        if(Math.random()*100>99.99) {
             setSpeed(0);
-        }*/
+        }
 
         if(speed==0)
             setColor(Color.BLACK);
+
+        //Envoie des messages alerte
+        if(getColor() == Color.RED)
+            if(distance(breakdown)>500)
+                setColor(null);
+            else
+                sendAll(new Message(breakdown));
+
+        //Adoption de la meme vitesse
+        if(frontSpeed >= 0 && getColor() != Color.BLACK)
+            speed = frontSpeed;
+
 
         if(destinations.size() != 0) {
             Point desti = destinations.element();
@@ -131,6 +160,7 @@ public class CarNode extends Node {
     }
 
     public void onArrival() {
+
         if(getLocation().equals(Direction.EAST.getDest())){
             setLocation(Location.WEST.getLoc());
             addDestination(Direction.EAST.getDest());
