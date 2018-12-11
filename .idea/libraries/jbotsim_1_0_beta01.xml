@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="jbotsim-1.0-beta01">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/jbotsim-1.0-beta01.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

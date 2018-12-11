@@ -10,15 +10,17 @@ import java.util.Queue;
 
 public class CarNodeManhattan extends Node{
 
-    enum Sens{
-        POSITIVE,
-        NEGATIVE;
+    enum Orientation{
+        SOUTH,
+        NORTH,
+        WEST,
+        EAST;
     }
 
     private Queue<Point> destinations = new LinkedList<Point>();
     private double frontSpeed = -1, speed = 1; // Number of units to be moved in each step.
     private Point breakdown;
-    private Sens sense;
+    private Orientation orien;
 
     public CarNodeManhattan(){
         setIcon("car.png");
@@ -29,14 +31,13 @@ public class CarNodeManhattan extends Node{
 
         //spawn
         if(rand<0.5) {
-            setLocation((int)(rand * 4)*200 + 100, (int)(rand2 * 4)*200 + 100);
-            sense = Sens.POSITIVE;
+            setLocation((int)(rand * 5)*200 + 100, (int)(rand2 * 5)*200 + 100);
         }
         else{
-            setLocation((int)(rand * 4)*200 + 100, (int)(rand2 * 4)*200 + 100);
-            sense = Sens.NEGATIVE;
+            setLocation((int)(rand * 5)*200 + 100, (int)(rand2 * 5)*200 + 100);
         }
 
+        orien = Orientation.values()[(int) rand*4];
         onArrival();
 
 
@@ -103,51 +104,106 @@ public class CarNodeManhattan extends Node{
     public void onArrival() {
         double rand = Math.random();
 
-        if(rand < 0.5){
-            //tout droit
-            if(sense == Sens.POSITIVE)
-                if(getLocation().getX() - 200 > 0)
-                    addDestination(getLocation().getX() - 200, getLocation().getY());
-                else {
-                    onArrival();
-                }
-            else
-                if(getLocation().getX() + 200 < 1000 )
-                    addDestination(getLocation().getX() + 200, getLocation().getY());
-                else {
-                    onArrival();
-                }
-        }
-        else if(rand < 0.75){
-            //à gauche
-            if(sense == Sens.POSITIVE)
-                if(getLocation().getY() - 200 > 0)
-                    addDestination(getLocation().getX(), getLocation().getY() - 200);
-                else {
-                    onArrival();
-                }
-            else
-                if(getLocation().getY() + 200 < 1000 )
-                    addDestination(getLocation().getX(), getLocation().getY() + 200);
-                else {
-                    onArrival();
-                }
-        }
-        else{
-            //à droite
-            if(sense == Sens.NEGATIVE)
-                if(getLocation().getY() - 200 > 0)
-                    addDestination(getLocation().getX(), getLocation().getY() - 200);
-                else {
-                    onArrival();
-                }
-            else
-            if(getLocation().getY() + 200 < 1000 )
-                addDestination(getLocation().getX(), getLocation().getY() + 200);
-            else {
-                onArrival();
-            }
+        switch(orien){
+            case NORTH:
+                if(rand<0.5)
+                    //tout droit
+                    if(getLocation().getX() - 200 > 0)
+                        addDestination(getLocation().getX() - 200, getLocation().getY());
+                    else
+                        onArrival();
+                else if(rand < 0.75)
+                    //à gauche
+                        if(getLocation().getY() - 200 > 0) {
+                            addDestination(getLocation().getX(), getLocation().getY() - 200);
+                            orien = Orientation.WEST;
+                        }
+                        else
+                            onArrival();
+                else
+                    //à droite
+                    if(getLocation().getY() + 200 < 1000) {
+                        addDestination(getLocation().getX(), getLocation().getY() + 200);
+                        orien = Orientation.EAST;
+                    }
+                    else
+                        onArrival();
+                break;
 
+            case SOUTH:
+                if(rand<0.5)
+                    //tout droit
+                    if(getLocation().getX() + 200 < 1000)
+                        addDestination(getLocation().getX() + 200, getLocation().getY());
+                    else
+                        onArrival();
+                else if(rand < 0.75)
+                    //à gauche
+                    if(getLocation().getY() + 200 < 1000) {
+                        addDestination(getLocation().getX(), getLocation().getY() + 200);
+                        orien = Orientation.EAST;
+                    }
+                    else
+                        onArrival();
+                else
+                    //à droite
+                    if(getLocation().getY() - 200 > 0) {
+                        addDestination(getLocation().getX(), getLocation().getY() - 200);
+                        orien = Orientation.WEST;
+                    }
+                    else
+                        onArrival();
+                break;
+
+            case WEST:
+                if(rand<0.5)
+                    //tout droit
+                    if(getLocation().getY() - 200 > 0)
+                        addDestination(getLocation().getX(), getLocation().getY() - 200);
+                    else
+                        onArrival();
+                else if(rand < 0.75)
+                    //à gauche
+                    if(getLocation().getX() + 200 < 1000){
+                        addDestination(getLocation().getX() + 200, getLocation().getY());
+                        orien = Orientation.SOUTH;
+                    }
+                    else
+                        onArrival();
+                else
+                    //à droite
+                    if(getLocation().getX() - 200 > 0){
+                        addDestination(getLocation().getX() - 200, getLocation().getY());
+                        orien = Orientation.NORTH;
+                    }
+                    else
+                        onArrival();
+                break;
+
+            case EAST:
+                if(rand<0.5)
+                    //tout droit
+                    if(getLocation().getY() + 200 < 1000)
+                        addDestination(getLocation().getX(), getLocation().getY() + 200);
+                    else
+                        onArrival();
+                else if(rand < 0.75)
+                    //à gauche
+                    if(getLocation().getX() - 200 > 0){
+                        addDestination(getLocation().getX() - 200, getLocation().getY());
+                        orien = Orientation.NORTH;
+                    }
+                    else
+                        onArrival();
+                else
+                    //à droite
+                    if(getLocation().getX() + 200 < 1000){
+                        addDestination(getLocation().getX() + 200, getLocation().getY());
+                        orien = Orientation.SOUTH;
+                    }
+                    else
+                        onArrival();
+                break;
         }
 
     }
