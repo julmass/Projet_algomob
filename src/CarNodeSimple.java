@@ -101,27 +101,24 @@ public class CarNodeSimple extends Node {
         if(node.getColor()!=null && node.getColor().equals(Color.BLACK) ){
             //contournement
             if(getDirection() == node.getDirection()) {
-                speed = 0;
-/*                Point dest = destinations.remove();
+                //speed = 0;
+                Point dest = destinations.remove();
                 Point loc = getLocation();
                 if(getDirection()==0){
-                    addDestination(loc.getX(), loc.getY() + 25);
-                    addDestination(loc.getX() + 100, loc.getY() + 25);
+                    addDestination(loc.getX() + 50, loc.getY() + 25);
                     addDestination(loc.getX() + 100, loc.getY());
                     addDestination(dest);
                 }
                 else{
-                    addDestination(loc.getX(), loc.getY() - 25);
-                    addDestination(loc.getX() - 100, loc.getY() - 25);
+                    addDestination(loc.getX() - 50, loc.getY() - 25);
                     addDestination(loc.getX() - 100, loc.getY());
                     addDestination(dest);
-                }*/
+                }
             }
-            else if(getColor()==null){
-                breakdown = node.getLocation();
-                sendAll(new Message(breakdown));
-                setColor(Color.RED);
-            }
+            breakdown = node.getLocation();
+            sendAll(new Message(breakdown));
+            setColor(Color.RED);
+
         }
     }
 
@@ -130,8 +127,6 @@ public class CarNodeSimple extends Node {
         breakdown = (Point) message.getContent();
 
         if(getColor() == null){
-            if(breakdown.getX() == getLocation().getX())
-                speed = speed / 2;
             setColor(Color.RED);
         }
 
@@ -144,6 +139,7 @@ public class CarNodeSimple extends Node {
             setSpeed(0);
         }*/
 
+        //Couleur noire pour vehicule en panne
         if(speed==0)
             setColor(Color.BLACK);
 
@@ -155,7 +151,7 @@ public class CarNodeSimple extends Node {
                 sendAll(new Message(breakdown));
 
         //Adoption de la meme vitesse
-        if(frontSpeed >= 0 && getColor() != Color.BLACK)
+        if(frontSpeed > 0 && getColor() != Color.BLACK)
             speed = frontSpeed;
 
 

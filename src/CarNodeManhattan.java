@@ -24,24 +24,16 @@ public class CarNodeManhattan extends Node{
 
     public CarNodeManhattan(){
         setIcon("car.png");
-        setSize(15);
+        setSize(20);
 
         double rand = Math.random();
         double rand2 = Math.random();
 
         //spawn
-        if(rand<0.5) {
-            setLocation((int)(rand * 5)*200 + 100, (int)(rand2 * 5)*200 + 100);
-        }
-        else{
-            setLocation((int)(rand * 5)*200 + 100, (int)(rand2 * 5)*200 + 100);
-        }
+        setLocation((int)(rand * 5)*200 + 100, (int)(rand2 * 5)*200 + 100);
 
         orien = Orientation.values()[(int) rand*4];
         onArrival();
-
-
-
 
         speed = rand+0.75;
 
@@ -73,18 +65,50 @@ public class CarNodeManhattan extends Node{
 
     @Override
     public void onSensingIn(Node node){
+        //Adoption de la meme vitesse
+        if(getDirection() == node.getDirection() && node.getColor() != Color.BLACK)
+            frontSpeed = ((CarNodeManhattan) node).getSpeed();
 
+        //Detection d'un vehicule en panne
+        if(node.getColor()!=null && node.getColor().equals(Color.BLACK) ){
+            if(getDirection() == node.getDirection())
+                speed = 0;
+
+            else if(getColor()==null){
+                breakdown = node.getLocation();
+                sendAll(new Message(breakdown));
+                setColor(Color.RED);
+            }
+        }
     }
 
     @Override
     public void onMessage(Message message){
+        breakdown = (Point) message.getContent();
 
+        if(getColor() == null){
+            setColor(Color.RED);
+        }
 
     }
 
     @Override
     public void onClock() {
 
+        //Couleur noire pour vehicule en panne
+        if(speed==0)
+            setColor(Color.BLACK);
+
+        //Envoie des messages alerte
+        if(getColor() == Color.RED)
+            if(distance(breakdown)>400)
+                setColor(null);
+            else
+                sendAll(new Message(breakdown));
+
+        //Adoption de la meme vitesse
+        if(frontSpeed >= 0 && getColor() != Color.BLACK)
+            speed = frontSpeed;
 
         if(destinations.size() != 0) {
             Point desti = destinations.element();
